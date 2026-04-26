@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AR Scan Marker Hiro</title>
+
+<!-- A-Frame -->
+<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+
+<!-- AR.js versi stabil -->
+<script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+}
+
+/* tombol */
+.controls {
+    position: fixed;
+    bottom: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    z-index: 10;
+}
+
+button {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+#start {
+    background: green;
+    color: white;
+}
+
+#stop {
+    background: red;
+    color: white;
+}
+
+/* status */
+.status {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: black;
+    color: lime;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    z-index: 10;
+}
+</style>
+</head>
+
+<body>
+
+<div class="status" id="status">SCAN OFF</div>
+
+<div class="controls">
+    <button onclick="startScan()">Start</button>
+    <button onclick="stopScan()">Stop</button>
+</div>
+
+<!-- SCENE AR -->
+<a-scene id="scene"
+embedded
+arjs="sourceType: webcam; debugUIEnabled: false;"
+vr-mode-ui="enabled: false"
+device-orientation-permission-ui="enabled: false">
+
+    <!-- marker Hiro -->
+    <a-marker preset="hiro" id="marker">
+
+        <!-- objek 3D -->
+        <a-box position="0 0.5 0" color="red">
+            <a-animation attribute="rotation"
+                to="0 360 0"
+                dur="3000"
+                repeat="indefinite">
+            </a-animation>
+        </a-box>
+
+        <!-- teks -->
+        <a-text value="Scan Berhasil!"
+        position="0 1 0"
+        align="center"
+        color="white">
+        </a-text>
+
+    </a-marker>
+
+    <!-- kamera -->
+    <a-entity camera></a-entity>
+
+</a-scene>
+
+<script>
+let statusText = document.getElementById("status");
+let scene = document.getElementById("scene");
+
+/* STOP default (biar tidak langsung nyala) */
+scene.style.display = "none";
+
+/* START */
+function startScan(){
+    scene.style.display = "block";
+    statusText.innerHTML = "SCAN ON";
+}
+
+/* STOP */
+function stopScan(){
+    scene.style.display = "none";
+    statusText.innerHTML = "SCAN OFF";
+}
+
+/* DETEKSI MARKER */
+let marker = document.getElementById("marker");
+
+marker.addEventListener("markerFound", () => {
+    statusText.innerHTML = "MARKER TERDETEKSI";
+});
+
+marker.addEventListener("markerLost", () => {
+    statusText.innerHTML = "SCAN ON";
+});
+</script>
+
+</body>
+</html>
